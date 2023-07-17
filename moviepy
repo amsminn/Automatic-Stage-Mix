@@ -1,1 +1,8 @@
+from moviepy.editor import VideoFileClip, concatenate_videoclips, vfx
+clip1 = VideoFileClip("C:/Users/aero0/Downloads/three.mp4").subclip(10,20).fx(vfx.fadein,1).fx(vfx.fadeout,1)
+clip2 = VideoFileClip("C:/Users/aero0/Downloads/one.mp4").subclip(20,30).fx(vfx.fadein,1).fx(vfx.fadeout,1)
+clip3 = VideoFileClip("C:/Users/aero0/Downloads/three.mp4").subclip(20,30).fx(vfx.fadein,1).fx(vfx.fadeout,1)
+clip4 = VideoFileClip("C:/Users/aero0/Downloads/one.mp4").subclip(10,20).fx(vfx.fadein,1).fx(vfx.fadeout,1)
 
+combined = concatenate_videoclips([clip1,clip2,clip3,clip4])
+combined.write_videofile("combined.mp4")
