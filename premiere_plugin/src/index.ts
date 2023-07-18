@@ -5,5 +5,7 @@ const projectDir = projectPath.substring(0, projectPath.lastIndexOf("/") + 1);
 
 const filePath = projectDir + "test.txt";
 const file = new File(filePath);
-$.bp();
-alert(file.read(3));
+if (!file.open("r")) {
+    alert("file not found");
+}
+alert(file.read());
