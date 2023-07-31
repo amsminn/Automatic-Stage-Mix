@@ -22,7 +22,7 @@ def visualize_pose(frame, results):
     return frame
 
 mp_pose = mp.solutions.pose
-pose = mp_pose.Pose(static_image_mode=False, min_detection_confidence=0.6, min_tracking_confidence=0.6)
+pose = mp_pose.Pose(static_image_mode=False, min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
 video_path = "test1.mp4"
 cap = cv2.VideoCapture(video_path)
