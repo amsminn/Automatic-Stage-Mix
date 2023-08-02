@@ -1,0 +1,4 @@
+video1Offset: 1.06773333333333
+video2Offset: 0
+transitionIn: 16.4164
+transitionOut: 17.3840333333333
