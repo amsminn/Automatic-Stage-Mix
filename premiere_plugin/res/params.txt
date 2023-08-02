@@ -1,4 +1,6 @@
-video1Offset: 1.06773333333333
-video2Offset: 0
-transitionIn: 16.4164
-transitionOut: 17.3840333333333
+video1Path = D:\noname\Projects\GitHub\Automatic-Stage-Mix\premiere_plugin\res\test_assets\[얼빡직캠 4K] 프로미스나인 백지헌 ' menow' (fromis_9 BAEK JI HEON Facecam) @뮤직뱅크(Music Bank) 230609.mp4
+video2Path = D:\noname\Projects\GitHub\Automatic-Stage-Mix\premiere_plugin\res\test_assets\[입덕직캠] 프로미스나인 백지헌 직캠 4K ' menow' (fromis_9 BAEK JIHEON FanCam) @MCOUNTDOWN_2023.6.8.mp4
+video1Offset = 1.06773333333333
+video2Offset = 0
+transitionIn = 16.4164
+transitionOut = 17.3840333333333

@@ -1,4 +1,7 @@
 import { ParamWriter, type VideoSelectionParams } from "./paramWriter";
+import { PythonRunner } from "./pythonRunner";
+import { ResultWatcher } from "./resultWatcher";
+import { PathUtil } from "./utils";
 
 function main(): void {
     const project = app.project;
@@ -24,11 +27,11 @@ function main(): void {
     const trackItem1 = videoSelections[0];
     const trackItem2 = videoSelections[1];
 
-    const video1TrimIn = trackItem1.start.seconds;
-    const video1TrimOut = trackItem1.end.seconds;
+    // const video1TrimIn = trackItem1.start.seconds;
+    // const video1TrimOut = trackItem1.end.seconds;
 
-    const video2TrimIn = trackItem2.start.seconds;
-    const video2TrimOut = trackItem2.end.seconds;
+    // const video2TrimIn = trackItem2.start.seconds;
+    // const video2TrimOut = trackItem2.end.seconds;
 
     const sequenceTransitionIn = Math.max(trackItem1.start.seconds, trackItem2.start.seconds);
     const sequenceTransitionOut = Math.min(trackItem1.end.seconds, trackItem2.end.seconds);
@@ -36,38 +39,52 @@ function main(): void {
     const video1Offset = trackItem1.start.seconds - trackItem1.inPoint.seconds;
     const video2Offset = trackItem2.start.seconds - trackItem2.inPoint.seconds;
 
-    const params = <VideoSelectionParams>{
+    const params: VideoSelectionParams = {
+        video1Path: trackItem1.projectItem.getMediaPath(),
+        video2Path: trackItem2.projectItem.getMediaPath(),
         video1Offset: video1Offset,
         video2Offset: video2Offset,
         transitionIn: sequenceTransitionIn,
         transitionOut: sequenceTransitionOut
     };
 
+    PythonRunner.run(
+        PathUtil.projectRelativePath("../src/fileIpcTest.py"),
+        [
+            PathUtil.projectRelativePath("params.txt"),
+            PathUtil.projectRelativePath("result.txt")
+        ]
+    );
+    $.sleep(2000);
+
     new ParamWriter("params.txt").write(params);
+    const result = new ResultWatcher("result.txt").wait();
 
-    alert(`
-video1: ${trackItem1.name}
-video1TrimIn: ${video1TrimIn}
-video1TrimOut: ${video1TrimOut}
+    alert(result);
 
-video1ClipIn: ${trackItem1.inPoint.seconds}
-video1ClipOut: ${trackItem1.outPoint.seconds}
+    //     alert(`
+    // video1: ${trackItem1.name}
+    // video1TrimIn: ${video1TrimIn}
+    // video1TrimOut: ${video1TrimOut}
 
-video1Offset: ${video1Offset}
+    // video1ClipIn: ${trackItem1.inPoint.seconds}
+    // video1ClipOut: ${trackItem1.outPoint.seconds}
+
+    // video1Offset: ${video1Offset}
 
 
-video2: ${trackItem2.name}
-video2TrimIn: ${video2TrimIn}
-video2TrimOut: ${video2TrimOut}
+    // video2: ${trackItem2.name}
+    // video2TrimIn: ${video2TrimIn}
+    // video2TrimOut: ${video2TrimOut}
 
-video2ClipIn: ${trackItem2.inPoint.seconds}
-video2ClipOut: ${trackItem2.outPoint.seconds}
+    // video2ClipIn: ${trackItem2.inPoint.seconds}
+    // video2ClipOut: ${trackItem2.outPoint.seconds}
 
-video2Offset: ${video2Offset}
+    // video2Offset: ${video2Offset}
 
-sequenceTransitionIn: ${sequenceTransitionIn}
-sequenceTransitionOut: ${sequenceTransitionOut}
-    `);
+// sequenceTransitionIn: ${sequenceTransitionIn}
+// sequenceTransitionOut: ${sequenceTransitionOut}
+//     `);
 }
 
 main();

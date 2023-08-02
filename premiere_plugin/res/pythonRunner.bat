@@ -1,0 +1,2 @@
+cd "D:/noname/Projects/GitHub/Automatic-Stage-Mix/premiere_plugin/src/"
+python "D:/noname/Projects/GitHub/Automatic-Stage-Mix/premiere_plugin/src/fileIpcTest.py" "D:/noname/Projects/GitHub/Automatic-Stage-Mix/premiere_plugin/res/params.txt" "D:/noname/Projects/GitHub/Automatic-Stage-Mix/premiere_plugin/res/result.txt"

@@ -11,4 +11,13 @@ export class PathUtil {
         }
         return stack.join("/");
     }
+
+    public static getProjectDir(): string {
+        const projectPath = this.pathNormalize(app.project.path);
+        return projectPath.substring(0, projectPath.lastIndexOf("/") + 1);
+    }
+
+    public static projectRelativePath(path: string): string {
+        return this.pathNormalize(this.getProjectDir() + path);
+    }
 }
