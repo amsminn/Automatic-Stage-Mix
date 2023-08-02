@@ -44,8 +44,3 @@ export class ParamWriter {
         this._file.close();
     }
 }
-
-// if (!file.open("r")) {
-//     alert("file not found");
-// }
-// alert(file.read());
