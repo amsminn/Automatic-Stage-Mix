@@ -48,6 +48,7 @@ function main(): void {
         transitionOut: sequenceTransitionOut
     };
 
+    new ParamWriter("params.txt").write(params);
     PythonRunner.run(
         PathUtil.projectRelativePath("../src/fileIpcTest.py"),
         [
@@ -56,9 +57,6 @@ function main(): void {
             PathUtil.projectRelativePath("result.txt")
         ]
     );
-    $.sleep(2000);
-
-    new ParamWriter("params.txt").write(params);
     const result = new ResultWatcher("result.txt").wait();
 
     alert(result);

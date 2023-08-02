@@ -16,7 +16,7 @@ export class ResultWatcher {
     }
 
     public wait(): string {
-        while (!this._file.open("r")) $.sleep(1000);
+        while (!this._file.open("r")) $.sleep(200);
 
         const text = this._file.read();
         this._file.close();

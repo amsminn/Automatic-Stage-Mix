@@ -33,7 +33,7 @@ class FileWatcher:
         while True:
             if self.check():
                 break
-            time.sleep(1)
+            time.sleep(200 / 1000)
 
 class ParamReader:
     def __init__(self, filepath: str) -> None:
@@ -79,9 +79,6 @@ if __name__ == "__main__":
     watcher = FileWatcher(watchFile)
     reader = ParamReader(watchFile)
     while True:
-        watcher.wait()
-        print("File modified")
-
         reader.read_params()
         print(f"video1Path = {reader.get('video1Path')}")
         print(f"video2Path = {reader.get('video2Path')}")
@@ -93,4 +90,7 @@ if __name__ == "__main__":
         # make response
 
         with open(responseFile, "w", encoding="utf-8") as f:
-            f.write("OK")
+            f.write(f"currentTime: {time.time()}\n")
+        
+        watcher.wait()
+        print("File modified")

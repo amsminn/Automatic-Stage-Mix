@@ -15,8 +15,6 @@ def ping(port: int) -> bool:
 
 if __name__ == "__main__":
     if (ping(int(29381))):
-        print("server is already running")
         sys.exit(0)
     else:
-        print("run python script")
         subprocess.Popen('''python "D:/noname/Projects/GitHub/Automatic-Stage-Mix/premiere_plugin/src/fileIpcTest.py" "29381" "D:/noname/Projects/GitHub/Automatic-Stage-Mix/premiere_plugin/res/params.txt" "D:/noname/Projects/GitHub/Automatic-Stage-Mix/premiere_plugin/res/result.txt"''', cwd="D:/noname/Projects/GitHub/Automatic-Stage-Mix/premiere_plugin/src/")
