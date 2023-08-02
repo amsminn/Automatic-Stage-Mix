@@ -1,6 +1,8 @@
 import os
 import time
 import sys
+import socket
+import threading
 
 class FileWatcher:
     def __init__(self, filepath: str) -> None:
@@ -54,10 +56,25 @@ class ParamReader:
     
     def get_float(self, key: str) -> float:
         return float(self._params[key])
+    
+class ProcessPingServer:
+    def __init__(self, port: int) -> None:
+        self._port = port
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._socket.bind(("localhost", port))
+        self._socket.listen(1)
+        self._thread = threading.Thread(target=self._run, daemon=True)
+        self._thread.start()
+    
+    def _run(self) -> None:
+        while True:
+            conn, addr = self._socket.accept()
+            conn.close()
 
 if __name__ == "__main__":
-    watchFile = sys.argv[1]
-    responseFile = sys.argv[2]
+    ProcessPingServer(int(sys.argv[1]))
+    watchFile = sys.argv[2]
+    responseFile = sys.argv[3]
 
     watcher = FileWatcher(watchFile)
     reader = ParamReader(watchFile)

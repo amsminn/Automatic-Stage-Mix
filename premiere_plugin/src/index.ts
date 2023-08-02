@@ -51,6 +51,7 @@ function main(): void {
     PythonRunner.run(
         PathUtil.projectRelativePath("../src/fileIpcTest.py"),
         [
+            "29381", // ping server port
             PathUtil.projectRelativePath("params.txt"),
             PathUtil.projectRelativePath("result.txt")
         ]
