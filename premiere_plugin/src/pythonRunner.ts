@@ -30,6 +30,8 @@ if __name__ == "__main__":
 }
 
 export class PythonRunner {
+    private constructor() { /* block constructor */ }
+
     public static run(scriptPath: string, args: string[] = []): void {
         const pythonExcutionScriptFilePath = PathUtil.projectRelativePath("pythonExcutionScript.py");
         const pythonExcutionScriptFile = new File(pythonExcutionScriptFilePath);
