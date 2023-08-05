@@ -5,6 +5,8 @@ import { TransitionMaker } from "./transitionMaker";
 // import { PathUtil } from "./utils";
 
 function main(): void {
+    app.enableQE();
+
     const project = app.project;
     const currentSequence = project.activeSequence;
     const selections = currentSequence.getSelection();
@@ -45,7 +47,7 @@ function main(): void {
 
         video1Offset: video1Offset,
         video2Offset: video2Offset,
-        
+
         transitionIn: sequenceTransitionIn,
         transitionOut: sequenceTransitionOut
     };

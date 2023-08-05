@@ -29,6 +29,7 @@ export class TransitionMaker {
         // find empty video track in range
         const videoTracks = app.project.activeSequence.videoTracks;
         let insertVideoTrack: Track | null = null;
+        let insertVideoTrackIndex = -1;
 
         for (let i = 0; i < videoTracks.numTracks; i++) {
             const track = videoTracks[i];
@@ -39,8 +40,8 @@ export class TransitionMaker {
                 const clip = clips[j];
 
                 if (
-                    (clip.start.seconds < transitionIn && transitionIn < clip.end.seconds) ||
-                    (clip.start.seconds < transitionOut && transitionOut < clip.end.seconds)
+                    (clip.start.seconds <= transitionIn && transitionIn < clip.end.seconds) ||
+                    (clip.start.seconds <= transitionOut && transitionOut < clip.end.seconds)
                 ) {
                     hasClipInRange = true;
                     break;
@@ -49,13 +50,22 @@ export class TransitionMaker {
 
             if (!hasClipInRange) {
                 insertVideoTrack = track;
+                insertVideoTrackIndex = i;
                 break;
             }
         }
 
+        const qeProject = qe.project;
+        const qeSequence = qe.project.getActiveSequence();
+
         if (insertVideoTrack === null) {
-            alert("no empty video track");
-            return;
+            qeSequence.addTracks(
+                1, // video track num
+                videoTracks.numTracks, // after witch video track add them
+                0 // audio track num
+            );
+            insertVideoTrack = videoTracks[videoTracks.numTracks - 1];
+            insertVideoTrackIndex = videoTracks.numTracks - 1;
         }
 
         // insert video1
@@ -71,7 +81,6 @@ export class TransitionMaker {
             1, // takeVideo
             0 // takeAudio
         );
-
         insertVideoTrack.overwriteClip(
             trimedVideo1,
             transitionIn
@@ -90,10 +99,22 @@ export class TransitionMaker {
             1, // takeVideo
             0 // takeAudio
         );
-
         insertVideoTrack.overwriteClip(
             trimedVideo2,
             transitionPoint
         );
+
+        // insert transition
+        const qeTrack = qeSequence.getVideoTrackAt(insertVideoTrackIndex);
+
+        let addedQeClip: any;
+        for (let i = 0; i < qeTrack.numItems; i++) {
+            const qeClip = qeTrack.getItemAt(i);
+            if (Math.abs(qeClip.start.secs - transitionIn) < 0.05) {
+                addedQeClip = qeClip;
+                break;
+            }
+        }
+        addedQeClip.addTransition(qeProject.getVideoTransitionByName("Cross Dissolve"));
     }
 }
