@@ -42,8 +42,10 @@ function main(): void {
     const params: VideoSelectionParams = {
         video1Path: trackItem1.projectItem.getMediaPath(),
         video2Path: trackItem2.projectItem.getMediaPath(),
+
         video1Offset: video1Offset,
         video2Offset: video2Offset,
+        
         transitionIn: sequenceTransitionIn,
         transitionOut: sequenceTransitionOut
     };
