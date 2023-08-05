@@ -1,7 +1,8 @@
-import { ParamWriter, type VideoSelectionParams } from "./paramWriter";
-import { PythonRunner } from "./pythonRunner";
-import { ResultWatcher } from "./resultWatcher";
-import { PathUtil } from "./utils";
+import type { VideoSelectionParams } from "./paramWriter";
+import { TransitionMaker } from "./transitionMaker";
+// import { PythonRunner } from "./pythonRunner";
+// import { ResultWatcher } from "./resultWatcher";
+// import { PathUtil } from "./utils";
 
 function main(): void {
     const project = app.project;
@@ -27,12 +28,6 @@ function main(): void {
     const trackItem1 = videoSelections[0];
     const trackItem2 = videoSelections[1];
 
-    // const video1TrimIn = trackItem1.start.seconds;
-    // const video1TrimOut = trackItem1.end.seconds;
-
-    // const video2TrimIn = trackItem2.start.seconds;
-    // const video2TrimOut = trackItem2.end.seconds;
-
     const sequenceTransitionIn = Math.max(trackItem1.start.seconds, trackItem2.start.seconds);
     const sequenceTransitionOut = Math.min(trackItem1.end.seconds, trackItem2.end.seconds);
 
@@ -47,43 +42,56 @@ function main(): void {
         transitionIn: sequenceTransitionIn,
         transitionOut: sequenceTransitionOut
     };
+    params;
 
-    new ParamWriter("params.txt").write(params);
-    PythonRunner.run(
-        PathUtil.projectRelativePath("../src/fileIpcTest.py"),
-        [
-            "29381", // ping server port
-            PathUtil.projectRelativePath("params.txt"),
-            PathUtil.projectRelativePath("result.txt")
-        ]
-    );
-    const result = new ResultWatcher("result.txt").wait();
+    // new ParamWriter("params.txt").write(params);
+    // PythonRunner.run(
+    //     PathUtil.projectRelativePath("../src/fileIpcTest.py"),
+    //     [
+    //         "29381", // ping server port
+    //         PathUtil.projectRelativePath("params.txt"),
+    //         PathUtil.projectRelativePath("result.txt")
+    //     ]
+    // );
+    // const result = new ResultWatcher("result.txt").wait();
 
-    alert(result);
+    // alert(result);
 
-    //     alert(`
-    // video1: ${trackItem1.name}
-    // video1TrimIn: ${video1TrimIn}
-    // video1TrimOut: ${video1TrimOut}
+    $.writeln(`
+video1: ${trackItem1.name}
+video1TrimIn: ${trackItem1.start.seconds}
+video1TrimOut: ${trackItem1.end.seconds}
 
-    // video1ClipIn: ${trackItem1.inPoint.seconds}
-    // video1ClipOut: ${trackItem1.outPoint.seconds}
+video1ClipIn: ${trackItem1.inPoint.seconds}
+video1ClipOut: ${trackItem1.outPoint.seconds}
 
-    // video1Offset: ${video1Offset}
+video1Offset: ${video1Offset}
 
 
-    // video2: ${trackItem2.name}
-    // video2TrimIn: ${video2TrimIn}
-    // video2TrimOut: ${video2TrimOut}
+video2: ${trackItem2.name}
+video2TrimIn: ${trackItem2.start.seconds}
+video2TrimOut: ${trackItem2.end.seconds}
 
-    // video2ClipIn: ${trackItem2.inPoint.seconds}
-    // video2ClipOut: ${trackItem2.outPoint.seconds}
+video2ClipIn: ${trackItem2.inPoint.seconds}
+video2ClipOut: ${trackItem2.outPoint.seconds}
 
-    // video2Offset: ${video2Offset}
+video2Offset: ${video2Offset}
 
-// sequenceTransitionIn: ${sequenceTransitionIn}
-// sequenceTransitionOut: ${sequenceTransitionOut}
-//     `);
+sequenceTransitionIn: ${sequenceTransitionIn}
+sequenceTransitionOut: ${sequenceTransitionOut}
+    `);
+
+    TransitionMaker.makeTransition({
+        video1: trackItem1.projectItem,
+        video2: trackItem2.projectItem,
+
+        video1Offset: video1Offset,
+        video2Offset: video2Offset,
+
+        transitionIn: sequenceTransitionIn,
+        transitionOut: sequenceTransitionOut,
+        transitionPoint: (sequenceTransitionIn + sequenceTransitionOut) / 2 // transitionPoint
+    });
 }
 
 main();
