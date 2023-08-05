@@ -31,6 +31,11 @@ function main(): void {
     const sequenceTransitionIn = Math.max(trackItem1.start.seconds, trackItem2.start.seconds);
     const sequenceTransitionOut = Math.min(trackItem1.end.seconds, trackItem2.end.seconds);
 
+    if (sequenceTransitionIn >= sequenceTransitionOut) {
+        alert("no overlap between 2 video");
+        return;
+    }
+
     const video1Offset = trackItem1.start.seconds - trackItem1.inPoint.seconds;
     const video2Offset = trackItem2.start.seconds - trackItem2.inPoint.seconds;
 
