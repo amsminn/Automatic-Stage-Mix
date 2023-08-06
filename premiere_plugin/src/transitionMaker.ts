@@ -115,6 +115,15 @@ export class TransitionMaker {
                 break;
             }
         }
-        addedQeClip.addTransition(qeProject.getVideoTransitionByName("Cross Dissolve"));
+
+        const videoFrameRate = app.project.activeSequence.getSettings().videoFrameRate;
+
+        const transitionDuration = new Time();
+        transitionDuration.seconds = transitionOut - transitionIn;
+        addedQeClip.addTransition(
+            qeProject.getVideoTransitionByName("Cross Dissolve"),
+            false,
+            transitionDuration.getFormatted(videoFrameRate, 104/*TIMEDISPLAY_30Timecode*/)
+        );
     }
 }
