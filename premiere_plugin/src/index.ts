@@ -27,8 +27,13 @@ function main(): void {
         return;
     }
 
-    const trackItem1 = videoSelections[0];
-    const trackItem2 = videoSelections[1];
+    let trackItem1 = videoSelections[0];
+    let trackItem2 = videoSelections[1];
+    if (trackItem1.start.seconds > trackItem2.start.seconds) {
+        const tmp = trackItem1;
+        trackItem1 = trackItem2;
+        trackItem2 = tmp;
+    }
 
     const sequenceTransitionIn = Math.max(trackItem1.start.seconds, trackItem2.start.seconds);
     const sequenceTransitionOut = Math.min(trackItem1.end.seconds, trackItem2.end.seconds);
@@ -99,7 +104,13 @@ sequenceTransitionOut: ${sequenceTransitionOut}
 
         transitionIn: sequenceTransitionIn,
         transitionOut: sequenceTransitionOut,
-        transitionPoint: (sequenceTransitionIn + sequenceTransitionOut) / 2 // transitionPoint
+        transitionPoint: (sequenceTransitionIn + sequenceTransitionOut) / 2, // transitionPoint
+
+        offsetTarget: "video1",
+        positionOffsetX: 10,
+        positionOffsetY: 10,
+        scaleOffset: 10,
+        rotationOffset: 10
     });
 }
 

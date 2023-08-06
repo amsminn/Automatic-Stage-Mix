@@ -8,6 +8,12 @@ export interface TransitionParams {
     transitionIn: number;
     transitionOut: number;
     transitionPoint: number;
+
+    offsetTarget: "video1" | "video2";
+    positionOffsetX: number;
+    positionOffsetY: number;
+    scaleOffset: number;
+    rotationOffset: number;
 }
 
 export class TransitionMaker {
@@ -23,7 +29,13 @@ export class TransitionMaker {
 
             transitionIn,
             transitionOut,
-            transitionPoint
+            transitionPoint,
+
+            offsetTarget,
+            positionOffsetX,
+            positionOffsetY,
+            scaleOffset,
+            rotationOffset
         } = params;
 
         // find empty video track in range
@@ -125,5 +137,7 @@ export class TransitionMaker {
             false,
             transitionDuration.getFormatted(videoFrameRate, 104/*TIMEDISPLAY_30Timecode*/)
         );
+
+        // set offset
     }
 }
