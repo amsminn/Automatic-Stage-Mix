@@ -9,7 +9,7 @@ RIGHT_EYE = [362, 263]
 EYES = LEFT_EYE + RIGHT_EYE
 mpDraw = mp.solutions.drawing_utils
 mpFaceMesh = mp.solutions.face_mesh
-faceMesh = mpFaceMesh.FaceMesh(max_num_faces=10)
+faceMesh = mpFaceMesh.FaceMesh(max_num_faces=1)
 drawSpec = mpDraw.DrawingSpec(thickness=1, circle_radius=1)
 
 def getV(img):
@@ -38,13 +38,13 @@ def f(a : tuple, b : tuple, img_h : int):
     c = abs(sqrt((a[0][0] - a[1][0]) ** 2 + (a[0][1] - a[1][1]) ** 2) - sqrt((b[0][0] - b[1][0]) ** 2 + (b[0][1] - b[1][1]) ** 2))
     return a + t * img_h / 10 + c
 
-def compare():
-    img1 = cv2.imread("./1.jpg")
-    img2 = cv2.imread("./2.jpg")
+def compare(name1 : str, nam22 : str):
+    img1 = cv2.imread("./name1.jpg")
+    img2 = cv2.imread("./name2.jpg")
     a = getV(img1)
     b = getV(img2)
     if a == None or b == None: return False
-    return f(a, b, img1.shape[0])
+    return tuple(f(a, b, img1.shape[0]) < 300, a, b)
 
 def face_landmarks():
     cap = cv2.VideoCapture("./aaaa.mp4")
@@ -77,5 +77,5 @@ def face_landmarks():
     cv2.destroyAllWindows()
     cap.release()
 
-if __name__ == "__main__":
-    print(compare()) # under 300 is similar
+# if __name__ == "__main__":
+#     print(compare()) # under 300 is similar
