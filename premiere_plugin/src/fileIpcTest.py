@@ -75,6 +75,7 @@ import cv2
 from math import *
 import mediapipe as mp
 import numpy as np
+import platform
 
 LEFT_EYE = [33, 133]
 RIGHT_EYE = [362, 263]
@@ -174,53 +175,55 @@ if __name__ == "__main__":
         video2Offset = reader.get_float('video2Offset')
         transitionIn = reader.get_float('transitionIn')
         transitionOut = reader.get_float('transitionOut')
-        face_landmarks(reader.get('video1Path'), transitionIn, transitionOut, video1Offset)
-        face_landmarks(reader.get('video2Path'), transitionIn, transitionOut, video2Offset)
+        
+        # due to apple silicon bug
+        if platform.processor() != "arm":
+            face_landmarks(reader.get('video1Path'), transitionIn, transitionOut, video1Offset)
+            face_landmarks(reader.get('video2Path'), transitionIn, transitionOut, video2Offset)
 
-        with open(responseFile, "w", encoding="utf-8") as f:
-            ret = (0, 0, 0, 1, (0, 0), (0, 0)) # (x, y, angle, scale, Va, Vb)
-            l = (transitionIn * 5 + transitionOut) / 6
-            while l <= transitionOut:
-                cost = compare(reader.get('video1Path'), reader.get('video2Path'), -video1Offset + l, -video2Offset + l)
-                if cost != False and cost[0] < 5:
-                    r = l
-                    cnt = 0
-                    while r + 0.033 <= transitionOut:
-                        tmp = compare(reader.get('video1Path'), reader.get('video2Path'), -video1Offset + r + 0.033, -video2Offset + r + 0.033)
-                        if tmp == False or tmp[0] >= 5: 
-                            cnt += 1
-                        else: cost = tmp
-                        if cnt >= 10: break
-                        r += 0.033
-                    T1, T2 = getTan(cost[1]), getTan(cost[2])
-                    ret = (cost[2][0][0] - cost[1][0][0], cost[2][0][1] - cost[1][0][1], atan((T2 - T1) / (1 + T1 * T2)), len(cost[2]) / len(cost[1]), cost[1][0], cost[2][0])
-                    break
-                l += 0.03
+        ret = (0, 0, 0, 1, (0, 0), (0, 0)) # (x, y, angle, scale, Va, Vb)
+        l = (transitionIn * 5 + transitionOut) / 6
+        while l <= transitionOut:
+            cost = compare(reader.get('video1Path'), reader.get('video2Path'), -video1Offset + l, -video2Offset + l)
+            if cost != False and cost[0] < 5:
                 r = l
-            result = ""
-            result += f"flag = {ret[0] < 5}\n"
-            ret = list(ret)
-            if ret[3] >= 1:
-                result += f"object = a\n"
-                result += f"axisX = {ret[4][0]}\n"
-                result += f"axisY = {ret[4][1]}\n"
-            else:
-                result += f"object = b\n"
-                result += f"axisX = {ret[5][0]}\n"
-                result += f"axisY = {ret[5][1]}\n"
-                ret[0] = -ret[0]
-                ret[1] = -ret[1]
-                ret[2] = -ret[2]
-                ret[3] = 1 / ret[3]
-            result += f"rangeL = {l}\n"
-            result += f"rangeR = {r}\n"
-            result += f"time = {(l + r) / 2}\n"
-            result += f"vectorX = {ret[0]}\n"
-            result += f"vectorY = {ret[1]}\n"
-            result += f"counterclockwise_angle = {ret[2]}\n"
-            result += f"scale = {ret[3]}\n"
-            print(result)
-            f.write(result)
+                cnt = 0
+                while r + 0.033 <= transitionOut:
+                    tmp = compare(reader.get('video1Path'), reader.get('video2Path'), -video1Offset + r + 0.033, -video2Offset + r + 0.033)
+                    if tmp == False or tmp[0] >= 5: 
+                        cnt += 1
+                    else: cost = tmp
+                    if cnt >= 10: break
+                    r += 0.033
+                T1, T2 = getTan(cost[1]), getTan(cost[2])
+                ret = (cost[2][0][0] - cost[1][0][0], cost[2][0][1] - cost[1][0][1], atan((T2 - T1) / (1 + T1 * T2)), len(cost[2]) / len(cost[1]), cost[1][0], cost[2][0])
+                break
+            l += 0.03
+            r = l
+        result = ""
+        result += f"flag = {ret[0] < 5}\n"
+        ret = list(ret)
+        if ret[3] >= 1:
+            result += f"object = a\n"
+            result += f"axisX = {ret[4][0]}\n"
+            result += f"axisY = {ret[4][1]}\n"
+        else:
+            result += f"object = b\n"
+            result += f"axisX = {ret[5][0]}\n"
+            result += f"axisY = {ret[5][1]}\n"
+            ret[0] = -ret[0]
+            ret[1] = -ret[1]
+            ret[2] = -ret[2]
+            ret[3] = 1 / ret[3]
+        result += f"rangeL = {l}\n"
+        result += f"rangeR = {r}\n"
+        result += f"time = {(l + r) / 2}\n"
+        result += f"vectorX = {ret[0]}\n"
+        result += f"vectorY = {ret[1]}\n"
+        result += f"counterclockwise_angle = {ret[2]}\n"
+        result += f"scale = {ret[3]}\n"
+        print(result)
+        with open(responseFile, "w", encoding="utf-8") as f: f.write(result)
         
         watcher.wait()
         print("File modified")
