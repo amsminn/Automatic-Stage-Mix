@@ -164,7 +164,7 @@ if __name__ == "__main__":
                     break
                 l += 0.3
             result = ""
-            result += f"flag = {ret[0] < 0.5}\n"
+            result += f"flag = {ret[0] < 1}\n"
             ret = list(ret)
             if ret[3] >= 1:
                 result += f"object = a\n"
