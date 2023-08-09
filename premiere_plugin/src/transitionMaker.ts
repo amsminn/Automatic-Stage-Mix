@@ -1,3 +1,5 @@
+import { Interpolator } from "./interpolator";
+
 export interface TransitionParams {
     video1: ProjectItem;
     video2: ProjectItem;
@@ -14,6 +16,13 @@ export interface TransitionParams {
     positionOffsetY: number;
     scaleOffset: number;
     rotationOffset: number;
+
+    sampledCurve?: {
+        x1: number;
+        y1: number;
+        x2: number;
+        y2: number;
+    }
 }
 
 export class TransitionMaker {
@@ -35,7 +44,9 @@ export class TransitionMaker {
             positionOffsetX,
             positionOffsetY,
             scaleOffset,
-            rotationOffset
+            rotationOffset,
+
+            sampledCurve
         } = params;
 
         // find empty video track in range
@@ -139,5 +150,83 @@ export class TransitionMaker {
         );
 
         // set offset
+        let videoClip: TrackItem | null = null;
+        let transformZeroTime: number;
+        let transformOneTime: number;
+        if (offsetTarget === "video1") {
+            for (let i = 0; i < insertVideoTrack.clips.numItems; i++) {
+                const clip = insertVideoTrack.clips[i];
+                if (clip.start.seconds === transitionIn) {
+                    videoClip = clip;
+                    break;
+                }
+            }
+            transformZeroTime = transitionIn - video1Offset;
+            transformOneTime = transitionPoint - video1Offset;
+        } else {
+            for (let i = 0; i < insertVideoTrack.clips.numItems; i++) {
+                const clip = insertVideoTrack.clips[i];
+                if (clip.start.seconds === transitionPoint) {
+                    videoClip = clip;
+                    break;
+                }
+            }
+            transformZeroTime = transitionOut - video2Offset;
+            transformOneTime = transitionPoint - video2Offset;
+        }
+
+        if (videoClip === null) throw new Error("videoClip is null");
+
+        const videoComponent = videoClip.components[1];
+        const videoComponentProperties = videoComponent.properties;
+        for (let i = 0; i < videoComponentProperties.numItems; i++) {
+            const property = videoComponentProperties[i];
+            if (property.displayName !== "Position"
+             && property.displayName !== "Scale"
+             && property.displayName !== "Rotation") continue;
+
+            property.setTimeVarying(true);
+
+            property.addKey(transformZeroTime);
+            property.addKey(transformOneTime);
+
+            if (property.displayName === "Position") {
+                property.setValueAtKey(transformZeroTime, [0.5, 0.5], true);
+                property.setValueAtKey(transformOneTime, [0.5 + positionOffsetX, 0.5 + positionOffsetY], true);
+            } else if (property.displayName === "Scale") {
+                property.setValueAtKey(transformZeroTime, 100, true);
+                property.setValueAtKey(transformOneTime, 100 * scaleOffset, true);
+            } else if (property.displayName === "Rotation") {
+                property.setValueAtKey(transformZeroTime, 0, true);
+                property.setValueAtKey(transformOneTime, rotationOffset, true);
+            }
+            property.setInterpolationTypeAtKey(transformZeroTime, 5, true); // kfInterpMode_Bezier
+            property.setInterpolationTypeAtKey(transformOneTime, 5, true); // kfInterpMode_Bezier
+
+            if (sampledCurve !== undefined) {
+                const oneFrameTime = videoFrameRate.seconds;
+                for (let sampleTime = transformZeroTime + oneFrameTime; sampleTime < transformOneTime; sampleTime += oneFrameTime) {
+                    property.addKey(sampleTime);
+
+                    const interpolateTime = (sampleTime - transformZeroTime) / (transformOneTime - transformZeroTime);
+                    const weight = Interpolator.CubicBezierInterpolate(
+                        sampledCurve.x1, sampledCurve.x2, // x1, x2
+                        sampledCurve.y1, sampledCurve.y2, // y1, y2
+                        interpolateTime
+                    );
+
+                    if (property.displayName === "Position") {
+                        property.setValueAtKey(sampleTime, [
+                            Interpolator.LinearInterpolate(0.5, 0.5 + positionOffsetX, weight),
+                            Interpolator.LinearInterpolate(0.5, 0.5 + positionOffsetY, weight)
+                        ]);
+                    } else if (property.displayName === "Scale") {
+                        property.setValueAtKey(sampleTime, Interpolator.LinearInterpolate(100, 100 * scaleOffset, weight), true);
+                    } else if (property.displayName === "Rotation") {
+                        property.setValueAtKey(sampleTime, Interpolator.LinearInterpolate(0, rotationOffset, weight), true);
+                    }
+                }
+            }
+        }
     }
 }

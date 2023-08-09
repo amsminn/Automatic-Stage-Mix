@@ -1,8 +1,8 @@
-import type { VideoSelectionParams } from "./paramWriter";
+import { ParamWriter, type VideoSelectionParams } from "./paramWriter";
+import { PythonRunner } from "./pythonRunner";
+import { ResultWatcher } from "./resultWatcher";
 import { TransitionMaker } from "./transitionMaker";
-// import { PythonRunner } from "./pythonRunner";
-// import { ResultWatcher } from "./resultWatcher";
-// import { PathUtil } from "./utils";
+import { PathUtil } from "./utils";
 
 function main(): void {
     app.enableQE();
@@ -58,42 +58,18 @@ function main(): void {
     };
     params;
 
-    // new ParamWriter("params.txt").write(params);
-    // PythonRunner.run(
-    //     PathUtil.projectRelativePath("../src/fileIpcTest.py"),
-    //     [
-    //         "29381", // ping server port
-    //         PathUtil.projectRelativePath("params.txt"),
-    //         PathUtil.projectRelativePath("result.txt")
-    //     ]
-    // );
-    // const result = new ResultWatcher("result.txt").wait();
+    new ParamWriter("params.txt").write(params);
+    PythonRunner.run(
+        PathUtil.projectRelativePath("../src/fileIpcTest.py"),
+        [
+            "29381", // ping server port
+            PathUtil.projectRelativePath("params.txt"),
+            PathUtil.projectRelativePath("result.txt")
+        ]
+    );
+    const result = new ResultWatcher("result.txt").wait();
 
-    // alert(result);
-
-    $.writeln(`
-video1: ${trackItem1.name}
-video1TrimIn: ${trackItem1.start.seconds}
-video1TrimOut: ${trackItem1.end.seconds}
-
-video1ClipIn: ${trackItem1.inPoint.seconds}
-video1ClipOut: ${trackItem1.outPoint.seconds}
-
-video1Offset: ${video1Offset}
-
-
-video2: ${trackItem2.name}
-video2TrimIn: ${trackItem2.start.seconds}
-video2TrimOut: ${trackItem2.end.seconds}
-
-video2ClipIn: ${trackItem2.inPoint.seconds}
-video2ClipOut: ${trackItem2.outPoint.seconds}
-
-video2Offset: ${video2Offset}
-
-sequenceTransitionIn: ${sequenceTransitionIn}
-sequenceTransitionOut: ${sequenceTransitionOut}
-    `);
+    alert(result);
 
     TransitionMaker.makeTransition({
         video1: trackItem1.projectItem,
@@ -107,10 +83,15 @@ sequenceTransitionOut: ${sequenceTransitionOut}
         transitionPoint: (sequenceTransitionIn + sequenceTransitionOut) / 2, // transitionPoint
 
         offsetTarget: "video1",
-        positionOffsetX: 10,
-        positionOffsetY: 10,
-        scaleOffset: 10,
-        rotationOffset: 10
+        positionOffsetX: 0.1,
+        positionOffsetY: 0.1,
+        scaleOffset: 0.8,
+        rotationOffset: 3,
+
+        sampledCurve: {
+            x1: 0.2, y1: 0.1,
+            x2: 0.0, y2: 0.7
+        }
     });
 }
 
