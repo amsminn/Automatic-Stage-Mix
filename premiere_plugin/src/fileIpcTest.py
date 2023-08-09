@@ -125,7 +125,7 @@ def compare(name1 : str, name2 : str, time1 : float, time2 : float):
     return (ff(a, b, img1.shape[0]), a, b)
 
 def face_landmarks(path : str, start : float, end : float, offset : float):
-    cap = cv2.VideoCapture("path")
+    cap = cv2.VideoCapture(path)
     fps = cap.get(cv2.CAP_PROP_FPS)
     cap.set(cv2.CAP_PROP_POS_MSEC, (start - offset) * 1000)
     pTime = 0
@@ -142,17 +142,16 @@ def face_landmarks(path : str, start : float, end : float, offset : float):
                 for id in EYES:
                     lm = faceLms.landmark[id]
                     cv2.circle(img, (int(lm.x * img_w), int(lm.y * img_h)), 5, (255, 0, 0), cv2.FILLED)
-
         cTime = time.time()
         fps = 1 / (cTime - pTime)
         pTime = cTime
         cv2.putText(img, f'FPS: {int(fps)}', (20, 70), cv2.FONT_HERSHEY_PLAIN,
                     3, (255, 0, 0), 3)
         cv2.imshow("Image", img)
-        cv2.waitKey(1)
+        # cv2.waitKey(1)
 
-    cv2.destroyAllWindows()
     cap.release()
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     ProcessPingServer(int(sys.argv[1]))
@@ -180,24 +179,26 @@ if __name__ == "__main__":
 
         with open(responseFile, "w", encoding="utf-8") as f:
             ret = (0, 0, 0, 1, (0, 0), (0, 0)) # (x, y, angle, scale, Va, Vb)
-            l = (transitionIn + 2 * transitionOut) / 3
-            r = l
+            l = (transitionIn * 5 + transitionOut) / 6
             while l <= transitionOut:
                 cost = compare(reader.get('video1Path'), reader.get('video2Path'), -video1Offset + l, -video2Offset + l)
-                if cost != False and cost[0] < 1:
+                if cost != False and cost[0] < 5:
                     r = l
-                    while r <= transitionOut:
+                    cnt = 0
+                    while r + 0.033 <= transitionOut:
                         tmp = compare(reader.get('video1Path'), reader.get('video2Path'), -video1Offset + r + 0.033, -video2Offset + r + 0.033)
-                        if tmp == False or tmp[0] >= 1: break
-                        cost = tmp
+                        if tmp == False or tmp[0] >= 5: 
+                            cnt += 1
+                        else: cost = tmp
+                        if cnt >= 10: break
                         r += 0.033
                     T1, T2 = getTan(cost[1]), getTan(cost[2])
-                    ret = (cost[2][0][0] - cost[1][0][0], cost[2][0][1] - cost[1][0][1], atan((T2 - T1) / (1 + T1 * T2)), len(cost[2]) / len(cost[1]), cost[1], cost[2])
+                    ret = (cost[2][0][0] - cost[1][0][0], cost[2][0][1] - cost[1][0][1], atan((T2 - T1) / (1 + T1 * T2)), len(cost[2]) / len(cost[1]), cost[1][0], cost[2][0])
                     break
-                l += 0.3
+                l += 0.03
                 r = l
             result = ""
-            result += f"flag = {ret[0] < 1}\n"
+            result += f"flag = {ret[0] < 5}\n"
             ret = list(ret)
             if ret[3] >= 1:
                 result += f"object = a\n"
@@ -218,6 +219,7 @@ if __name__ == "__main__":
             result += f"vectorY = {ret[1]}\n"
             result += f"counterclockwise_angle = {ret[2]}\n"
             result += f"scale = {ret[3]}\n"
+            print(result)
             f.write(result)
         
         watcher.wait()
