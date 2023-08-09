@@ -57,7 +57,6 @@ function main(): void {
         transitionIn: sequenceTransitionIn,
         transitionOut: sequenceTransitionOut
     };
-    params;
 
     new ParamWriter("params.txt").write(params);
     PythonRunner.run(
@@ -80,15 +79,15 @@ function main(): void {
         video1Offset: video1Offset,
         video2Offset: video2Offset,
 
-        transitionIn: sequenceTransitionIn,
-        transitionOut: sequenceTransitionOut,
-        transitionPoint: (sequenceTransitionIn + sequenceTransitionOut) / 2, // transitionPoint
+        transitionIn: Number(resultParams["rangeL"]),
+        transitionOut: Number(resultParams["rangeR"]),
+        transitionPoint: Number(resultParams["time"]),
 
         offsetTarget: "video1",
-        positionOffsetX: 0.1,
-        positionOffsetY: 0.1,
-        scaleOffset: 0.8,
-        rotationOffset: 3,
+        positionOffsetX: Number(resultParams["vectorX"]),
+        positionOffsetY: Number(resultParams["vectorY"]),
+        scaleOffset: Number(resultParams["scale"]),
+        rotationOffset: Number(resultParams["counterclockwise_angle"]),
 
         sampledCurve: {
             x1: 0.2, y1: 0.1,
