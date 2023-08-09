@@ -76,6 +76,23 @@ function main(): void {
         return;
     }
 
+    const rangeL = Number(resultParams["rangeL"]);
+    const rangeR = Number(resultParams["rangeR"]);
+    const transitionPoint = Number(resultParams["time"]);
+
+    if (rangeL < sequenceTransitionIn || rangeR > sequenceTransitionOut) {
+        alert("transition range is out of sequence");
+        return;
+    }
+
+    const offsetTarget = resultParams["object"] === "a" ? "video1" : "video2";
+    const positionOffsetX = Number(resultParams["vectorX"]);
+    const positionOffsetY = Number(resultParams["vectorY"]);
+    const scaleOffset = Number(resultParams["scale"]);
+    const rotationOffset = Number(resultParams["counterclockwise_angle"]) * 180 / Math.PI;
+    const anchorOffsetX = Number(resultParams["axisX"]);
+    const anchorOffsetY = Number(resultParams["axisY"]);
+
     TransitionMaker.makeTransition({
         video1: trackItem1.projectItem,
         video2: trackItem2.projectItem,
@@ -83,17 +100,17 @@ function main(): void {
         video1Offset: video1Offset,
         video2Offset: video2Offset,
 
-        transitionIn: Number(resultParams["rangeL"]),
-        transitionOut: Number(resultParams["rangeR"]),
-        transitionPoint: Number(resultParams["time"]),
+        transitionIn: rangeL,
+        transitionOut: rangeR,
+        transitionPoint: transitionPoint,
 
-        offsetTarget: resultParams["object"] === "a" ? "video1" : "video2",
-        positionOffsetX: Number(resultParams["vectorX"]),
-        positionOffsetY: Number(resultParams["vectorY"]),
-        scaleOffset: Number(resultParams["scale"]),
-        rotationOffset: Number(resultParams["counterclockwise_angle"]),
-        anchorOffsetX: Number(resultParams["axisX"]),
-        anchorOffsetY: Number(resultParams["axisY"]),
+        offsetTarget: offsetTarget,
+        positionOffsetX: positionOffsetX,
+        positionOffsetY: positionOffsetY,
+        scaleOffset: scaleOffset,
+        rotationOffset: rotationOffset,
+        anchorOffsetX: anchorOffsetX,
+        anchorOffsetY: anchorOffsetY,
 
         sampledCurve: {
             x1: 0.2, y1: 0.1,

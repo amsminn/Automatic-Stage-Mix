@@ -197,7 +197,10 @@ export class TransitionMaker {
 
             if (property.displayName === "Position") {
                 property.setValueAtKey(transformZeroTime, [0.5, 0.5], true);
-                property.setValueAtKey(transformOneTime, [0.5 + positionOffsetX, 0.5 + positionOffsetY], true);
+                property.setValueAtKey(transformOneTime, [
+                    0.5 + positionOffsetX + anchorOffsetX,
+                    0.5 + positionOffsetY + anchorOffsetY
+                ], true);
             } else if (property.displayName === "Scale") {
                 property.setValueAtKey(transformZeroTime, 100, true);
                 property.setValueAtKey(transformOneTime, 100 * scaleOffset, true);
@@ -225,8 +228,8 @@ export class TransitionMaker {
 
                     if (property.displayName === "Position") {
                         property.setValueAtKey(sampleTime, [
-                            Interpolator.linearInterpolate(0.5, 0.5 + positionOffsetX, weight),
-                            Interpolator.linearInterpolate(0.5, 0.5 + positionOffsetY, weight)
+                            Interpolator.linearInterpolate(0.5, 0.5 + positionOffsetX + anchorOffsetX, weight),
+                            Interpolator.linearInterpolate(0.5, 0.5 + positionOffsetY + anchorOffsetY, weight)
                         ]);
                     } else if (property.displayName === "Scale") {
                         property.setValueAtKey(sampleTime, Interpolator.linearInterpolate(100, 100 * scaleOffset, weight), true);
