@@ -162,16 +162,16 @@ if __name__ == "__main__":
                     ret = (cost[0], cost[2][0][0] - cost[1][0][0], cost[2][0][1] - cost[1][0][1], atan((T2 - T1) / (1 + T1 * T2)), len(cost[2]) / len(cost[1]))
                     break
                 l += 0.033
-            if ret[0] < 300:
-                result = ""
-                result = f"rangeL = {l}\n"
-                result += f"rangeR = {r}\n"
-                result += f"time = {(l + r) / 2}\n"
-                result += f"vectorX = {ret[1]}\n"
-                result += f"vectorY = {ret[2]}\n"
-                result += f"counterclockwise_angle = {ret[3]}\n"
-                result += f"scale = {ret[4]}\n"
-                f.write(result)
+            result = ""
+            result += f"flag = {ret[0] < 0.5}\n"
+            result += f"rangeL = {l}\n"
+            result += f"rangeR = {r}\n"
+            result += f"time = {(l + r) / 2}\n"
+            result += f"vectorX = {ret[1]}\n"
+            result += f"vectorY = {ret[2]}\n"
+            result += f"counterclockwise_angle = {ret[3]}\n"
+            result += f"scale = {ret[4]}\n"
+            f.write(result)
         
         watcher.wait()
         print("File modified")
