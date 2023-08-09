@@ -105,7 +105,7 @@ def getTan(v : tuple):
     else: 
         return (v[0][1] - v[1][1]) / (v[0][0] - v[1][0])
     
-def f(a : tuple, b : tuple, img_h : int):
+def ff(a : tuple, b : tuple, img_h : int):
     t1, t2 = getTan(a), getTan(b)
     t = atan((t1 - t2) / (1 + t1 * t2))
     if t < 0: t += pi
@@ -122,7 +122,7 @@ def compare(name1 : str, name2 : str, time1 : float, time2 : float):
     a = getV(img1)
     b = getV(img2)
     if a == None or b == None: return False
-    return tuple(f(a, b, img1.shape[0]), a, b)
+    return tuple(ff(a, b, img1.shape[0]), a, b)
 
 if __name__ == "__main__":
     ProcessPingServer(int(sys.argv[1]))
