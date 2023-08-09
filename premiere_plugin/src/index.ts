@@ -1,3 +1,4 @@
+import { ParamReader } from "./paramReader";
 import { ParamWriter, type VideoSelectionParams } from "./paramWriter";
 import { PythonRunner } from "./pythonRunner";
 import { ResultWatcher } from "./resultWatcher";
@@ -68,8 +69,9 @@ function main(): void {
         ]
     );
     const result = new ResultWatcher("result.txt").wait();
-
-    alert(result);
+    const resultParams = ParamReader.read(result);
+    $.writeln(result);
+    $.writeln(resultParams);
 
     TransitionMaker.makeTransition({
         video1: trackItem1.projectItem,
