@@ -47,7 +47,8 @@ def compare(name1 : str, nam22 : str):
     return tuple(f(a, b, img1.shape[0]) < 300, a, b)
 
 def face_landmarks():
-    cap = cv2.VideoCapture("./aaaa.mp4")
+    cap = cv2.VideoCapture("/Users/chaewan/Desktop//Automatic-Stage-Mix/premiere_plugin/res/test_assets/[입덕직캠] 프로미스나인 백지헌 직캠 4K ' menow' (fromis_9 BAEK JIHEON FanCam) @MCOUNTDOWN_2023.6.8.mp4")
+    cap.set(cv2.CAP_PROP_POS_MSEC, 15 * 1000)
     pTime = 0
     while True:
         success, img = cap.read()
@@ -77,5 +78,5 @@ def face_landmarks():
     cv2.destroyAllWindows()
     cap.release()
 
-# if __name__ == "__main__":
-#     print(compare()) # under 300 is similar
+if __name__ == "__main__":
+    face_landmarks()

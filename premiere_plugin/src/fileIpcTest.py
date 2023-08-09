@@ -109,9 +109,9 @@ def ff(a : tuple, b : tuple, img_h : int):
     t1, t2 = getTan(a), getTan(b)
     t = atan((t1 - t2) / (1 + t1 * t2))
     if t < 0: t += pi
-    a = (a[0][0] - b[0][0]) ** 2 + (a[0][1] - b[0][1]) ** 2
+    a_ = (a[0][0] - b[0][0]) ** 2 + (a[0][1] - b[0][1]) ** 2
     c = abs(sqrt((a[0][0] - a[1][0]) ** 2 + (a[0][1] - a[1][1]) ** 2) - sqrt((b[0][0] - b[1][0]) ** 2 + (b[0][1] - b[1][1]) ** 2))
-    return a + t / 100 + c
+    return a_ + t / 100 + c
 
 def compare(name1 : str, name2 : str, time1 : float, time2 : float):
     tmp1 = cv2.VideoCapture(name1); tmp1.set(cv2.CAP_PROP_POS_MSEC, time1 * 1000)
@@ -122,7 +122,7 @@ def compare(name1 : str, name2 : str, time1 : float, time2 : float):
     a = getV(img1)
     b = getV(img2)
     if a == None or b == None: return False
-    return tuple(ff(a, b, img1.shape[0]), a, b)
+    return (ff(a, b, img1.shape[0]), a, b)
 
 if __name__ == "__main__":
     ProcessPingServer(int(sys.argv[1]))
@@ -147,38 +147,44 @@ if __name__ == "__main__":
         transitionOut = reader.get_float('transitionOut')
 
         with open(responseFile, "w", encoding="utf-8") as f:
-            ret = (float.inf, 0, 0, 0, 0, 0, 0) # (cost, x, y, angle, scale)
+            ret = (0, 0, 0, 1, (0, 0), (0, 0)) # (x, y, angle, scale, Va, Vb)
             l = (transitionIn + 2 * transitionOut) / 3
+            r = l
             while l <= transitionOut:
-                cost = compare(reader.get('video1Path'), reader.get('video2Path'), video1Offset + l, video2Offset + l)
-                if cost != False and cost[0] < 0.5:
+                cost = compare(reader.get('video1Path'), reader.get('video2Path'), -video1Offset + l, -video2Offset + l)
+                if cost != False and cost[0] < 1:
                     r = l
                     while r <= transitionOut:
-                        cost = compare(reader.get('video1Path'), reader.get('video2Path'), video1Offset + r + 0.033, video2Offset + r + 0.033)
-                        if cost == False or cost[0] >= 0.5: break
+                        tmp = compare(reader.get('video1Path'), reader.get('video2Path'), -video1Offset + r + 0.033, -video2Offset + r + 0.033)
+                        if tmp == False or tmp[0] >= 1: break
+                        cost = tmp
                         r += 0.033
-                    cost = compare(reader.get('video1Path'), reader.get('video2Path'), video1Offset + (l + r) / 2, video2Offset + (l + r) / 2)
-                    T1, T2 = getTan(cost[1]), getTan(cost[2]) 
-                    ret = (cost[0], cost[2][0][0] - cost[1][0][0], cost[2][0][1] - cost[1][0][1], atan((T2 - T1) / (1 + T1 * T2)), len(cost[2]) / len(cost[1]))
+                    T1, T2 = getTan(cost[1]), getTan(cost[2])
+                    ret = (cost[2][0][0] - cost[1][0][0], cost[2][0][1] - cost[1][0][1], atan((T2 - T1) / (1 + T1 * T2)), len(cost[2]) / len(cost[1]), cost[1], cost[2])
                     break
                 l += 0.3
             result = ""
             result += f"flag = {ret[0] < 0.5}\n"
-            if ret[4] >= 1:
-                result += f"object = a";
+            ret = list(ret)
+            if ret[3] >= 1:
+                result += f"object = a\n"
+                result += f"axisX = {ret[4][0]}\n"
+                result += f"axisY = {ret[4][1]}\n"
             else:
-                result += f"object = b";
-                ret[1] = -ret[1];
-                ret[2] = -ret[2];
-                ret[3] = -ret[3];
-                ret[4] = 1 / ret[4];
+                result += f"object = b\n"
+                result += f"axisX = {ret[5][0]}\n"
+                result += f"axisY = {ret[5][1]}\n"
+                ret[0] = -ret[0]
+                ret[1] = -ret[1]
+                ret[2] = -ret[2]
+                ret[3] = 1 / ret[3]
             result += f"rangeL = {l}\n"
             result += f"rangeR = {r}\n"
             result += f"time = {(l + r) / 2}\n"
-            result += f"vectorX = {ret[1]}\n"
-            result += f"vectorY = {ret[2]}\n"
-            result += f"counterclockwise_angle = {ret[3]}\n"
-            result += f"scale = {ret[4]}\n"
+            result += f"vectorX = {ret[0]}\n"
+            result += f"vectorY = {ret[1]}\n"
+            result += f"counterclockwise_angle = {ret[2]}\n"
+            result += f"scale = {ret[3]}\n"
             f.write(result)
         
         watcher.wait()
