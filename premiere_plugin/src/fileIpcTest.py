@@ -124,6 +124,36 @@ def compare(name1 : str, name2 : str, time1 : float, time2 : float):
     if a == None or b == None: return False
     return (ff(a, b, img1.shape[0]), a, b)
 
+def face_landmarks(path : str, start : float, end : float, offset : float):
+    cap = cv2.VideoCapture("path")
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    cap.set(cv2.CAP_PROP_POS_MSEC, (start - offset) * 1000)
+    pTime = 0
+    for _ in range(int(fps * (end - start))):
+        success, img = cap.read()
+        if not success: break
+        img_h, img_w, _ = img.shape
+        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        results = faceMesh.process(imgRGB)
+        # print(None != results.multi_face_landmarks)
+        if results.multi_face_landmarks:
+            for faceLms in results.multi_face_landmarks:
+                # draw eyes' end points
+                for id in EYES:
+                    lm = faceLms.landmark[id]
+                    cv2.circle(img, (int(lm.x * img_w), int(lm.y * img_h)), 5, (255, 0, 0), cv2.FILLED)
+
+        cTime = time.time()
+        fps = 1 / (cTime - pTime)
+        pTime = cTime
+        cv2.putText(img, f'FPS: {int(fps)}', (20, 70), cv2.FONT_HERSHEY_PLAIN,
+                    3, (255, 0, 0), 3)
+        cv2.imshow("Image", img)
+        cv2.waitKey(1)
+
+    cv2.destroyAllWindows()
+    cap.release()
+
 if __name__ == "__main__":
     ProcessPingServer(int(sys.argv[1]))
     watchFile = sys.argv[2]
@@ -145,6 +175,8 @@ if __name__ == "__main__":
         video2Offset = reader.get_float('video2Offset')
         transitionIn = reader.get_float('transitionIn')
         transitionOut = reader.get_float('transitionOut')
+        # face_landmarks(reader.get('video1Path'), transitionIn, transitionOut, video1Offset)
+        # face_landmarks(reader.get('video2Path'), transitionIn, transitionOut, video2Offset)
 
         with open(responseFile, "w", encoding="utf-8") as f:
             ret = (0, 0, 0, 1, (0, 0), (0, 0)) # (x, y, angle, scale, Va, Vb)
@@ -163,6 +195,7 @@ if __name__ == "__main__":
                     ret = (cost[2][0][0] - cost[1][0][0], cost[2][0][1] - cost[1][0][1], atan((T2 - T1) / (1 + T1 * T2)), len(cost[2]) / len(cost[1]), cost[1], cost[2])
                     break
                 l += 0.3
+                r = l
             result = ""
             result += f"flag = {ret[0] < 1}\n"
             ret = list(ret)
