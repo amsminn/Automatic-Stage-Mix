@@ -160,7 +160,7 @@ export class TransitionMaker {
         if (offsetTarget === "video1") {
             for (let i = 0; i < insertVideoTrack.clips.numItems; i++) {
                 const clip = insertVideoTrack.clips[i];
-                if (clip.start.seconds === transitionIn) {
+                if (Math.abs(clip.start.seconds - transitionIn) < 0.05) {
                     videoClip = clip;
                     break;
                 }
@@ -170,7 +170,7 @@ export class TransitionMaker {
         } else {
             for (let i = 0; i < insertVideoTrack.clips.numItems; i++) {
                 const clip = insertVideoTrack.clips[i];
-                if (clip.start.seconds === transitionPoint) {
+                if (Math.abs(clip.start.seconds - transitionPoint) < 0.05) {
                     videoClip = clip;
                     break;
                 }

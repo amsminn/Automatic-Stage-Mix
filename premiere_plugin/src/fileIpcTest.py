@@ -148,7 +148,7 @@ def face_landmarks(path : str, start : float, end : float, offset : float):
         cv2.putText(img, f'FPS: {int(fps)}', (20, 70), cv2.FONT_HERSHEY_PLAIN,
                     3, (255, 0, 0), 3)
         cv2.imshow("Image", img)
-        # cv2.waitKey(1)
+        cv2.waitKey(1)
 
     cap.release()
     cv2.destroyAllWindows()
@@ -174,8 +174,8 @@ if __name__ == "__main__":
         video2Offset = reader.get_float('video2Offset')
         transitionIn = reader.get_float('transitionIn')
         transitionOut = reader.get_float('transitionOut')
-        # face_landmarks(reader.get('video1Path'), transitionIn, transitionOut, video1Offset)
-        # face_landmarks(reader.get('video2Path'), transitionIn, transitionOut, video2Offset)
+        face_landmarks(reader.get('video1Path'), transitionIn, transitionOut, video1Offset)
+        face_landmarks(reader.get('video2Path'), transitionIn, transitionOut, video2Offset)
 
         with open(responseFile, "w", encoding="utf-8") as f:
             ret = (0, 0, 0, 1, (0, 0), (0, 0)) # (x, y, angle, scale, Va, Vb)
