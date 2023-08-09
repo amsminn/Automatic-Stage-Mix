@@ -164,6 +164,14 @@ if __name__ == "__main__":
                 l += 0.033
             result = ""
             result += f"flag = {ret[0] < 0.5}\n"
+            if ret[4] >= 1:
+                result += f"object = a";
+            else:
+                result += f"object = b";
+                ret[1] = -ret[1];
+                ret[2] = -ret[2];
+                ret[3] = -ret[3];
+                ret[4] = 1 / ret[4];
             result += f"rangeL = {l}\n"
             result += f"rangeR = {r}\n"
             result += f"time = {(l + r) / 2}\n"
