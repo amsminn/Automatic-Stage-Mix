@@ -161,7 +161,7 @@ if __name__ == "__main__":
                     T1, T2 = getTan(cost[1]), getTan(cost[2]) 
                     ret = (cost[0], cost[2][0][0] - cost[1][0][0], cost[2][0][1] - cost[1][0][1], atan((T2 - T1) / (1 + T1 * T2)), len(cost[2]) / len(cost[1]))
                     break
-                l += 0.033
+                l += 0.3
             result = ""
             result += f"flag = {ret[0] < 0.5}\n"
             if ret[4] >= 1:
