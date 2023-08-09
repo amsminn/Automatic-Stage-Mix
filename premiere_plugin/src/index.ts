@@ -70,7 +70,11 @@ function main(): void {
     const result = new ResultWatcher("result.txt").wait();
     const resultParams = ParamReader.read(result);
     $.writeln(result);
-    $.writeln(resultParams);
+
+    if (resultParams["flag"] === "False") {
+        alert("can't make transition");
+        return;
+    }
 
     TransitionMaker.makeTransition({
         video1: trackItem1.projectItem,
@@ -83,11 +87,13 @@ function main(): void {
         transitionOut: Number(resultParams["rangeR"]),
         transitionPoint: Number(resultParams["time"]),
 
-        offsetTarget: "video1",
+        offsetTarget: resultParams["object"] === "a" ? "video1" : "video2",
         positionOffsetX: Number(resultParams["vectorX"]),
         positionOffsetY: Number(resultParams["vectorY"]),
         scaleOffset: Number(resultParams["scale"]),
         rotationOffset: Number(resultParams["counterclockwise_angle"]),
+        anchorOffsetX: Number(resultParams["axisX"]),
+        anchorOffsetY: Number(resultParams["axisY"]),
 
         sampledCurve: {
             x1: 0.2, y1: 0.1,

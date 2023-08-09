@@ -8,7 +8,7 @@ export class Interpolator {
      * @param x Weight
      * @returns Interpolated value
      */
-    public static CubicBezierInterpolate(x1: number, x2: number, y1: number, y2: number, x: number): number {
+    public static cubicBezierInterpolate(x1: number, x2: number, y1: number, y2: number, x: number): number {
         let c = 0.5;
         let t = c;
         let s = 1.0 - t;
@@ -42,7 +42,7 @@ export class Interpolator {
      * @param x Weight
      * @returns Interpolated value
      */
-    public static LinearInterpolate(x1: number, x2: number, x: number): number {
+    public static linearInterpolate(x1: number, x2: number, x: number): number {
         return x1 + (x2 - x1) * x;
     }
 }

@@ -16,6 +16,8 @@ export interface TransitionParams {
     positionOffsetY: number;
     scaleOffset: number;
     rotationOffset: number;
+    anchorOffsetX: number;
+    anchorOffsetY: number;
 
     sampledCurve?: {
         x1: number;
@@ -45,6 +47,8 @@ export class TransitionMaker {
             positionOffsetY,
             scaleOffset,
             rotationOffset,
+            anchorOffsetX,
+            anchorOffsetY,
 
             sampledCurve
         } = params;
@@ -182,8 +186,9 @@ export class TransitionMaker {
         for (let i = 0; i < videoComponentProperties.numItems; i++) {
             const property = videoComponentProperties[i];
             if (property.displayName !== "Position"
-             && property.displayName !== "Scale"
-             && property.displayName !== "Rotation") continue;
+                && property.displayName !== "Scale"
+                && property.displayName !== "Rotation"
+                && property.displayName !== "Anchor Point") continue;
 
             property.setTimeVarying(true);
 
@@ -199,6 +204,9 @@ export class TransitionMaker {
             } else if (property.displayName === "Rotation") {
                 property.setValueAtKey(transformZeroTime, 0, true);
                 property.setValueAtKey(transformOneTime, rotationOffset, true);
+            } else if (property.displayName === "Anchor Point") {
+                property.setValueAtKey(transformZeroTime, [0.5, 0.5], true);
+                property.setValueAtKey(transformOneTime, [0.5 + anchorOffsetX, 0.5 + anchorOffsetY], true);
             }
             property.setInterpolationTypeAtKey(transformZeroTime, 5, true); // kfInterpMode_Bezier
             property.setInterpolationTypeAtKey(transformOneTime, 5, true); // kfInterpMode_Bezier
@@ -209,7 +217,7 @@ export class TransitionMaker {
                     property.addKey(sampleTime);
 
                     const interpolateTime = (sampleTime - transformZeroTime) / (transformOneTime - transformZeroTime);
-                    const weight = Interpolator.CubicBezierInterpolate(
+                    const weight = Interpolator.cubicBezierInterpolate(
                         sampledCurve.x1, sampledCurve.x2, // x1, x2
                         sampledCurve.y1, sampledCurve.y2, // y1, y2
                         interpolateTime
@@ -217,13 +225,18 @@ export class TransitionMaker {
 
                     if (property.displayName === "Position") {
                         property.setValueAtKey(sampleTime, [
-                            Interpolator.LinearInterpolate(0.5, 0.5 + positionOffsetX, weight),
-                            Interpolator.LinearInterpolate(0.5, 0.5 + positionOffsetY, weight)
+                            Interpolator.linearInterpolate(0.5, 0.5 + positionOffsetX, weight),
+                            Interpolator.linearInterpolate(0.5, 0.5 + positionOffsetY, weight)
                         ]);
                     } else if (property.displayName === "Scale") {
-                        property.setValueAtKey(sampleTime, Interpolator.LinearInterpolate(100, 100 * scaleOffset, weight), true);
+                        property.setValueAtKey(sampleTime, Interpolator.linearInterpolate(100, 100 * scaleOffset, weight), true);
                     } else if (property.displayName === "Rotation") {
-                        property.setValueAtKey(sampleTime, Interpolator.LinearInterpolate(0, rotationOffset, weight), true);
+                        property.setValueAtKey(sampleTime, Interpolator.linearInterpolate(0, rotationOffset, weight), true);
+                    } else if (property.displayName === "Anchor Point") {
+                        property.setValueAtKey(sampleTime, [
+                            Interpolator.linearInterpolate(0.5, 0.5 + anchorOffsetX, weight),
+                            Interpolator.linearInterpolate(0.5, 0.5 + anchorOffsetY, weight)
+                        ]);
                     }
                 }
             }
