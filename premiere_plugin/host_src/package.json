@@ -1,0 +1,26 @@
+{
+    "name": "automatic-stage-mix-host",
+    "type": "module",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "rollup -cw",
+        "build": "rollup -c",
+        "lint": "eslint --ext .ts,.tsx . --fix --cache"
+    },
+    "author": "noname0310",
+    "license": "MIT",
+    "devDependencies": {
+        "@rollup/plugin-alias": "^5.0.0",
+        "@rollup/plugin-eslint": "^9.0.4",
+        "@rollup/plugin-typescript": "^11.1.2",
+        "@typescript-eslint/eslint-plugin": "^6.1.0",
+        "@typescript-eslint/parser": "^6.1.0",
+        "eslint": "^8.45.0",
+        "eslint-plugin-simple-import-sort": "^10.0.0",
+        "eslint-webpack-plugin": "^4.0.1",
+        "rollup": "^3.26.3",
+        "types-for-adobe": "^7.0.12",
+        "typescript": "^5.1.6"
+    },
+    "sideEffects": false
+}
