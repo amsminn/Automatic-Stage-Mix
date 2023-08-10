@@ -2,15 +2,18 @@
     "name": "automatic-stage-mix",
     "version": "1.0.0",
     "scripts": {
-        "watch-host": "cd host_src && npm start",
-        "start": "copy-and-watch --watch \"{client|CSXS|host}\" ./dist",
-        "build": "cd host_src && npm run build && cd .. && copy-and-watch ./ ./dist",
-        "lint": "eslint --ext .ts,.tsx . --fix --cache"
+        "build": "cd host_src && npm start",
+        "install": "ts-node ./installScript.ts"
     },
     "author": "noname0310",
     "license": "MIT",
     "sideEffects": false,
+    "dependencies": {
+        "fs-extra": "^11.1.1"
+    },
     "devDependencies": {
-        "copy-and-watch": "^0.1.6"
+        "@types/fs-extra": "^11.0.1",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.1.6"
     }
 }
