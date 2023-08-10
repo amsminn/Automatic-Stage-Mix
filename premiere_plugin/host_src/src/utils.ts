@@ -13,12 +13,23 @@ export class PathUtil {
     }
 
     public static getScriptDir(): string {
-        const fsName = new File($.fileName).fsName;
-        const scriptPath = this.pathNormalize(fsName);
+        $.writeln($.fileName);
+        const fsName = new File($.fileName);
+        $.bp();
+        const scriptPath = this.pathNormalize(fsName.fsName);
         return scriptPath.substring(0, scriptPath.lastIndexOf("/") + 1);
+    }
+
+    public static getProjectDir(): string {
+        const projectPath = this.pathNormalize(app.project.path);
+        return projectPath.substring(0, projectPath.lastIndexOf("/") + 1);
     }
 
     public static scriptRelativePath(path: string): string {
         return this.pathNormalize(this.getScriptDir() + path);
+    }
+
+    public static projectRelativePath(path: string): string {
+        return this.pathNormalize(this.getProjectDir() + path);
     }
 }

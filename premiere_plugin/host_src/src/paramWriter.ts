@@ -19,7 +19,7 @@ export class ParamWriter {
             throw new Error("UTF-8 is not available");
         }
 
-        const filePath = PathUtil.scriptRelativePath(fileName);
+        const filePath = PathUtil.projectRelativePath(fileName);
         this._file = new File(filePath);
         if (!(this._file instanceof File)) {
             throw new Error(`${filePath} is not a file`);

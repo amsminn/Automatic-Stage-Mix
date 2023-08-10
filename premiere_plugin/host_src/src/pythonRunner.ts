@@ -33,7 +33,7 @@ export class PythonRunner {
     private constructor() { /* block constructor */ }
 
     public static run(scriptPath: string, args: string[] = []): void {
-        const pythonExcutionScriptFilePath = PathUtil.scriptRelativePath("pythonExcutionScript.py");
+        const pythonExcutionScriptFilePath = PathUtil.projectRelativePath("pythonExcutionScript.py");
         const pythonExcutionScriptFile = new File(pythonExcutionScriptFilePath);
         if (pythonExcutionScriptFile.open("w")) {
             pythonExcutionScriptFile.encoding = "UTF-8";
@@ -45,11 +45,11 @@ export class PythonRunner {
 
         let content = "";
         if ($.os.toLowerCase().indexOf("windows") === -1) {
-            shellScriptFile = new File(PathUtil.scriptRelativePath("pythonRunner.sh"));
+            shellScriptFile = new File(PathUtil.projectRelativePath("pythonRunner.sh"));
 
             content += "#!/bin/bash\n";
         } else {
-            shellScriptFile = new File(PathUtil.scriptRelativePath("pythonRunner.bat"));
+            shellScriptFile = new File(PathUtil.projectRelativePath("pythonRunner.bat"));
         }
 
         if (shellScriptFile.open("w")) {

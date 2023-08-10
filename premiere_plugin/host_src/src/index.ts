@@ -60,11 +60,11 @@ function main(): void {
 
     new ParamWriter("params.txt").write(params);
     PythonRunner.run(
-        PathUtil.scriptRelativePath("fileIpcTest.py"),
+        PathUtil.projectRelativePath("fileIpcTest.py"),
         [
             "29381", // ping server port
-            PathUtil.scriptRelativePath("params.txt"),
-            PathUtil.scriptRelativePath("result.txt")
+            PathUtil.projectRelativePath("params.txt"),
+            PathUtil.projectRelativePath("result.txt")
         ]
     );
     const result = new ResultWatcher("result.txt").wait();

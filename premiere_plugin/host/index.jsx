@@ -34,12 +34,21 @@ var PathUtil = /** @class */ (function () {
         return stack.join("/");
     };
     PathUtil.getScriptDir = function () {
-        var fsName = new File($.fileName).fsName;
-        var scriptPath = this.pathNormalize(fsName);
+        $.writeln($.fileName);
+        var fsName = new File($.fileName);
+        $.bp();
+        var scriptPath = this.pathNormalize(fsName.fsName);
         return scriptPath.substring(0, scriptPath.lastIndexOf("/") + 1);
+    };
+    PathUtil.getProjectDir = function () {
+        var projectPath = this.pathNormalize(app.project.path);
+        return projectPath.substring(0, projectPath.lastIndexOf("/") + 1);
     };
     PathUtil.scriptRelativePath = function (path) {
         return this.pathNormalize(this.getScriptDir() + path);
+    };
+    PathUtil.projectRelativePath = function (path) {
+        return this.pathNormalize(this.getProjectDir() + path);
     };
     return PathUtil;
 }());
@@ -49,7 +58,7 @@ var ParamWriter = /** @class */ (function () {
         if (!File.isEncodingAvailable("UTF-8")) {
             throw new Error("UTF-8 is not available");
         }
-        var filePath = PathUtil.scriptRelativePath(fileName);
+        var filePath = PathUtil.projectRelativePath(fileName);
         this._file = new File(filePath);
         if (!(this._file instanceof File)) {
             throw new Error("".concat(filePath, " is not a file"));
@@ -87,7 +96,7 @@ var PythonRunner = /** @class */ (function () {
     }
     PythonRunner.run = function (scriptPath, args) {
         if (args === void 0) { args = []; }
-        var pythonExcutionScriptFilePath = PathUtil.scriptRelativePath("pythonExcutionScript.py");
+        var pythonExcutionScriptFilePath = PathUtil.projectRelativePath("pythonExcutionScript.py");
         var pythonExcutionScriptFile = new File(pythonExcutionScriptFilePath);
         if (pythonExcutionScriptFile.open("w")) {
             pythonExcutionScriptFile.encoding = "UTF-8";
@@ -97,11 +106,11 @@ var PythonRunner = /** @class */ (function () {
         var shellScriptFile;
         var content = "";
         if ($.os.toLowerCase().indexOf("windows") === -1) {
-            shellScriptFile = new File(PathUtil.scriptRelativePath("pythonRunner.sh"));
+            shellScriptFile = new File(PathUtil.projectRelativePath("pythonRunner.sh"));
             content += "#!/bin/bash\n";
         }
         else {
-            shellScriptFile = new File(PathUtil.scriptRelativePath("pythonRunner.bat"));
+            shellScriptFile = new File(PathUtil.projectRelativePath("pythonRunner.bat"));
         }
         if (shellScriptFile.open("w")) {
             shellScriptFile.encoding = "UTF-8";
@@ -119,7 +128,7 @@ var ResultWatcher = /** @class */ (function () {
         if (!File.isEncodingAvailable("UTF-8")) {
             throw new Error("UTF-8 is not available");
         }
-        var filePath = PathUtil.scriptRelativePath(fileName);
+        var filePath = PathUtil.projectRelativePath(fileName);
         this._file = new File(filePath);
         if (!(this._file instanceof File)) {
             throw new Error("".concat(filePath, " is not a file"));
@@ -396,10 +405,10 @@ function main() {
         transitionOut: sequenceTransitionOut
     };
     new ParamWriter("params.txt").write(params);
-    PythonRunner.run(PathUtil.scriptRelativePath("fileIpcTest.py"), [
+    PythonRunner.run(PathUtil.projectRelativePath("fileIpcTest.py"), [
         "29381",
-        PathUtil.scriptRelativePath("params.txt"),
-        PathUtil.scriptRelativePath("result.txt")
+        PathUtil.projectRelativePath("params.txt"),
+        PathUtil.projectRelativePath("result.txt")
     ]);
     var result = new ResultWatcher("result.txt").wait();
     var resultParams = ParamReader.read(result);

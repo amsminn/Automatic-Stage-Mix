@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "scripts": {
         "start": "cd host_src && npm start",
-        "build": "cd host_src && npm build",
+        "build": "cd host_src && npm run build",
         "install": "ts-node ./installScript.ts"
     },
     "author": "noname0310",
