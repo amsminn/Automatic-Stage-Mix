@@ -13,7 +13,8 @@ export class PathUtil {
     }
 
     public static getScriptDir(): string {
-        const scriptPath = this.pathNormalize($.fileName);
+        const fsName = new File($.fileName).fsName;
+        const scriptPath = this.pathNormalize(fsName);
         return scriptPath.substring(0, scriptPath.lastIndexOf("/") + 1);
     }
 

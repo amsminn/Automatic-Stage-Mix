@@ -34,7 +34,8 @@ var PathUtil = /** @class */ (function () {
         return stack.join("/");
     };
     PathUtil.getScriptDir = function () {
-        var scriptPath = this.pathNormalize($.fileName);
+        var fsName = new File($.fileName).fsName;
+        var scriptPath = this.pathNormalize(fsName);
         return scriptPath.substring(0, scriptPath.lastIndexOf("/") + 1);
     };
     PathUtil.scriptRelativePath = function (path) {
