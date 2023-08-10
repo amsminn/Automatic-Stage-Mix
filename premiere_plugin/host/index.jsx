@@ -84,12 +84,12 @@ var ParamWriter = /** @class */ (function () {
 
 function createPythonExcutionScript(scriptPath, args, pingServerPort) {
     var scriptDir = PathUtil.pathNormalize(scriptPath.substring(0, scriptPath.lastIndexOf("/") + 1));
-    var executionCommand = "python \"".concat(scriptPath, "\"");
+    var executionArgs = "";
     for (var _i = 0, args_1 = args; _i < args_1.length; _i++) {
         var arg = args_1[_i];
-        executionCommand += " \"".concat(arg, "\"");
+        executionArgs += " \"".concat(arg, "\"");
     }
-    return /* python */ "\nimport sys\nimport socket\nimport subprocess\n\ndef ping(port: int) -> bool:\n    try:\n        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:\n            s.connect((\"localhost\", port))\n            s.close()\n    except ConnectionRefusedError:\n        return False\n    \n    return True\n\nif __name__ == \"__main__\":\n    if (ping(int(".concat(pingServerPort, "))):\n        sys.exit(0)\n    else:\n        subprocess.Popen('''").concat(executionCommand, "''', cwd=\"").concat(scriptDir, "\")\n");
+    return /* python */ "\nimport sys\nimport socket\nimport subprocess\nimport os\n\ndef ping(port: int) -> bool:\n    try:\n        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:\n            s.connect((\"localhost\", port))\n            s.close()\n    except ConnectionRefusedError:\n        return False\n    \n    return True\n\nif __name__ == \"__main__\":\n    if (ping(int(".concat(pingServerPort, "))):\n        sys.exit(0)\n    else:\n        appData = os.getenv('APPDATA')\n        pluginDir = appData + \"/Adobe/CEP/extensions/automatic-stage-mix/\"\n\n        command = '''python \"''' + pluginDir + '''").concat(scriptPath, "\"''' + \" \" + '''").concat(executionArgs, "'''\n        scriptDir = pluginDir + '''").concat(scriptDir, "'''\n        subprocess.Popen(command, cwd=scriptDir)\n");
 }
 var PythonRunner = /** @class */ (function () {
     function PythonRunner() {
@@ -405,7 +405,7 @@ function main() {
         transitionOut: sequenceTransitionOut
     };
     new ParamWriter("params.txt").write(params);
-    PythonRunner.run(PathUtil.projectRelativePath("fileIpcTest.py"), [
+    PythonRunner.run("host/fileIpcTest.py", [
         "29381",
         PathUtil.projectRelativePath("params.txt"),
         PathUtil.projectRelativePath("result.txt")

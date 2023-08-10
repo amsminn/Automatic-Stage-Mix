@@ -3,13 +3,14 @@ import { PathUtil } from "./utils";
 function createPythonExcutionScript(scriptPath: string, args: string[], pingServerPort: string): string {
     const scriptDir = PathUtil.pathNormalize(scriptPath.substring(0, scriptPath.lastIndexOf("/") + 1));
 
-    let executionCommand = `python "${scriptPath}"`;
-    for (const arg of args) executionCommand += ` "${arg}"`;
+    let executionArgs = "";
+    for (const arg of args) executionArgs += ` "${arg}"`;
 
     return /* python */`
 import sys
 import socket
 import subprocess
+import os
 
 def ping(port: int) -> bool:
     try:
@@ -25,7 +26,12 @@ if __name__ == "__main__":
     if (ping(int(${pingServerPort}))):
         sys.exit(0)
     else:
-        subprocess.Popen('''${executionCommand}''', cwd="${scriptDir}")
+        appData = os.getenv('APPDATA')
+        pluginDir = appData + "/Adobe/CEP/extensions/automatic-stage-mix/"
+
+        command = '''python "''' + pluginDir + '''${scriptPath}"''' + " " + '''${executionArgs}'''
+        scriptDir = pluginDir + '''${scriptDir}'''
+        subprocess.Popen(command, cwd=scriptDir)
 `;
 }
 

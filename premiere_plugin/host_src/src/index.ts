@@ -60,7 +60,7 @@ function main(): void {
 
     new ParamWriter("params.txt").write(params);
     PythonRunner.run(
-        PathUtil.projectRelativePath("fileIpcTest.py"),
+        "host/fileIpcTest.py",
         [
             "29381", // ping server port
             PathUtil.projectRelativePath("params.txt"),
