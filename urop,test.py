@@ -5,7 +5,7 @@ min_video_time = 10000
 change_time = 10
 set_clip = []
 pad_time = 4
-video_path = "C:/Users/aero0/Desktop/urop/영상 소스"
+video_path = "C:/Users/aero0/Desktop/urop/영상 제작 소스"
 origin_videopath = os.listdir(video_path)
 for i in range(len(origin_videopath)):
     clip = os.path.join(video_path, sorted(os.listdir(video_path))[i])
@@ -27,16 +27,13 @@ while t < min_video_time:
     for video_idx in range(len(set_clip)):
         if video_idx == cur_video:
             continue
-        clip = set_clip[random.randrange(0,len(set_clip))].subclip(cur_t, next_t)
-        print(cur_video,cur_t)
+        clip = set_clip[random.randrange(0,len(set_clip))].subclip(cur_t-1, next_t)
         t = next_t
         mix_clip.append(clip.set_start(cur_t-1).crossfadein(1))
     cur_video = next_video
-    # t = min(min_video_time, t + pad_time)
-    # pad_video = set_clip[cur_video].subclip(t,min(min_video_time, t + pad_time))
-    # mix_clip.append(pad_video)
-result_video = concatenate(mix_clip)
+result_video = CompositeVideoClip(mix_clip)
 result_video.write_videofile("real_final_video.mp4")
+
 
 
 
