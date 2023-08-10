@@ -55,7 +55,7 @@ export class PythonRunner {
         if (shellScriptFile.open("w")) {
             shellScriptFile.encoding = "UTF-8";
 
-            content += `python "${pythonExcutionScriptFilePath}\n`;
+            content += `python "${pythonExcutionScriptFilePath}"\n`;
             shellScriptFile.write(content);
             shellScriptFile.close();
         }

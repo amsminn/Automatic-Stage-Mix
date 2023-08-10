@@ -13,6 +13,7 @@ export class ResultWatcher {
         if (!(this._file instanceof File)) {
             throw new Error(`${filePath} is not a file`);
         }
+        this._file.remove();
     }
 
     public wait(): string {

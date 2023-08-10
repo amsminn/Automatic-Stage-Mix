@@ -2,7 +2,8 @@
     "name": "automatic-stage-mix",
     "version": "1.0.0",
     "scripts": {
-        "build": "cd host_src && npm start",
+        "start": "cd host_src && npm start",
+        "build": "cd host_src && npm build",
         "install": "ts-node ./installScript.ts"
     },
     "author": "noname0310",

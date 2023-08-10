@@ -105,7 +105,7 @@ var PythonRunner = /** @class */ (function () {
         }
         if (shellScriptFile.open("w")) {
             shellScriptFile.encoding = "UTF-8";
-            content += "python \"".concat(pythonExcutionScriptFilePath, "\n");
+            content += "python \"".concat(pythonExcutionScriptFilePath, "\"\n");
             shellScriptFile.write(content);
             shellScriptFile.close();
         }
@@ -124,6 +124,7 @@ var ResultWatcher = /** @class */ (function () {
         if (!(this._file instanceof File)) {
             throw new Error("".concat(filePath, " is not a file"));
         }
+        this._file.remove();
     }
     ResultWatcher.prototype.wait = function () {
         while (!this._file.open("r"))
