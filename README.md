@@ -8,6 +8,7 @@ https://github.com/amsminn/Automatic-Stage-Mix/assets/48761044/6feba974-8135-449
 
 - Windows10 / Windows11
 - Premire Pro CC
+- Node.js 18
 
 Premire Pro 2023 / Windows11 에서 제대로 동작하는것을 확인하였습니다.
 
