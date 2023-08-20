@@ -52,7 +52,7 @@ Registry Editor에서 `Computer\HKEY_CURRENT_USER\Software\Adobe\CSXS.11` 에 st
 
 ![cut clip](images/image-2.png)
 
-두 클립을 선택하고 Automatic Stage Mix 의 Run 버튼을 누릅니다. (Run을 누른뒤에 실행이 끝나지 전까지 Run을 다시 누르면 안되는 이슈가 있습니다.)
+두 클립을 선택하고 Automatic Stage Mix 의 Run 버튼을 누릅니다. (Run을 누른뒤에 실행이 끝나기 전까지 Run을 다시 누르면 안되는 이슈가 있습니다.)
 
 ![run script](images/image-3.png)
 
