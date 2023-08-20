@@ -8,11 +8,20 @@ https://github.com/amsminn/Automatic-Stage-Mix/assets/48761044/6feba974-8135-449
 
 - Windows10 / Windows11
 - Premire Pro CC
-- Node.js 18
+- Node.js 16 이상
+- Python 3.9 이상
 
 Premire Pro 2023 / Windows11 에서 제대로 동작하는것을 확인하였습니다.
 
 ## 설치 방법
+
+다음 명령어로 Python 패키지를 설치합니다.
+
+```bash
+pip install cv2
+pip install numpy
+pip install mediapipe
+```
 
 다음 명령어로 플러그인을 Premiere Pro에 설치합니다.
 
